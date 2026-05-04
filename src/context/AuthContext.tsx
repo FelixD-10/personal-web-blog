@@ -28,22 +28,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const response = await authApi.login(email, password);
-    setUser(response.user);
-  }, []);
+  const login = async (email: string, password: string) => {
+    const data = await authApi.login(email, password);
+    localStorage.setItem('authToken', data.token); // Lưu token
+    setUser(data.user);
+  };
 
-  const logout = useCallback(async () => {
-    try {
-      await authApi.logout();
-    } finally {
-      setUser(null);
-    }
-  }, []);
+  const logout = async () => {
+    await authApi.logout();
+    localStorage.removeItem('authToken');
+    setUser(null);
+  };
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth]);9
 
   return (
     <AuthContext.Provider
