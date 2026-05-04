@@ -6,11 +6,10 @@ const authController = {
     try {
       const { email, password } = req.body;
       const result = await authService.login(email, password);
-      res.cookie('token', result.token, {
-        httpOnly: true,
-        secure: true,                // Luôn true trên production (Render dùng HTTPS)
-        sameSite: 'none',
-        maxAge: 7 * 24 * 60 * 60 * 1000
+      res.status(200).json({
+        success: true,
+        user: { id: user._id, email: user.email, name: user.name },
+        token: result.token // Gửi token về cho frontend
       });
       res.json({ user: result.user });
     } catch (error) {
