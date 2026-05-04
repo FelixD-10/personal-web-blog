@@ -8,8 +8,8 @@ const authController = {
       const result = await authService.login(email, password);
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+        secure: true,                // Luôn true trên production (Render dùng HTTPS)
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
       res.json({ user: result.user });
@@ -21,8 +21,8 @@ const authController = {
   async logout(req, res) {
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
+      secure: true,                // Luôn true trên production (Render dùng HTTPS)
+      sameSite: 'none'
     });
     res.json({ message: 'Logged out successfully' });
   },
