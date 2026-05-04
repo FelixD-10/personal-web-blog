@@ -3,17 +3,25 @@ import type { Post, Category, PostsResponse, CategoryPostsResponse, AuthResponse
 const API_BASE = import.meta.env.VITE_API_URL;
 
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const token = localStorage.getItem('authToken');
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
+    // Không cần credentials: 'include' nữa
   });
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(error.message || `Request failed with status ${response.status}`);
+    if (response.status === 401) {
+      localStorage.removeItem('authToken');
+      // Có thể redirect về login
+    }
+    throw new Error(await response.text());
   }
   return response.json();
 }
