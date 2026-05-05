@@ -11,7 +11,7 @@ const authController = {
         user: { id: user._id, email: user.email, name: user.name },
         token: result.token // Gửi token về cho frontend
       });
-      res.json({ user: result.user });
+      res.json({ user: result.user, token: result.token });
     } catch (error) {
       res.status(401).json({ message: error.message });
     }
